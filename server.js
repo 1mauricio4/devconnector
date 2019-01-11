@@ -12,6 +12,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // DB config
 const db = require("./config/keys").mongoURI;
+const key = require("./config/keys").secretOrKey;
 
 // Connect to DB
 mongoose
