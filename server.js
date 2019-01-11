@@ -7,6 +7,9 @@ const posts = require("./routes/api/posts");
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 // DB config
 const db = require("./config/keys").mongoURI;
 
