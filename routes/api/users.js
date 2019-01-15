@@ -7,15 +7,27 @@ const passport = require("passport");
 
 // Load user model
 const User = require("../../models/User");
+// Retrieve Secret Key
 const key = require("../../config/keys").secretOrKey;
+// Load Input Validatoin
+const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 // @route  /api/users/register
 // @desc   Register new user
 // @access Public
 router.post("/register", (req, res) => {
+  const { errors, isValid } = validateRegisterInput(req.body);
+
+  // Check Validator
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      return res.status(400).json({ email: "Email already exists" });
+      errors.email = "Email already exists";
+      return res.status(400).json(errors);
     } else {
       const avatar = gravatar.url(req.body.email, {
         s: "200",
@@ -47,13 +59,21 @@ router.post("/register", (req, res) => {
 // @desc   Login user / returning JWT Token
 // @access Public
 router.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  // Check Validator
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
   // Find user by email
   User.findOne({ email: email }).then(user => {
     if (!user) {
-      return res.status(404).json({ email: "User not found" });
+      errors.email = "User not found";
+      return res.status(404).json(errors);
     }
 
     // check password
@@ -67,7 +87,8 @@ router.post("/login", (req, res) => {
           res.json({ success: true, token: "Bearer " + token });
         });
       } else {
-        return res.status(400).json({ password: "Password incorrect" });
+        errors.password = "Password incorrect";
+        return res.status(400).json(errors);
       }
     });
   });
