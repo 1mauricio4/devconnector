@@ -1,4 +1,4 @@
-const isEmpty = value => {
+const is_Empty = value => {
   return (
     value === undefined ||
     value === null ||
@@ -7,4 +7,4 @@ const isEmpty = value => {
   );
 };
 
-module.exports = isEmpty;
+module.exports = is_Empty;
