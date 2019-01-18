@@ -66,6 +66,8 @@ router.post("/login", (req, res) => {
     return res.status(400).json(errors);
   }
 
+  let ip = req.connection.remoteAddress;
+
   const email = req.body.email;
   const password = req.body.password;
 
