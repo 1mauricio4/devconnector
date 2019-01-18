@@ -33,6 +33,6 @@ app.use("/api/users", users);
 app.use("/api/profile", profile);
 app.use("/api/posts", posts);
 
-const server = app.listen(process.env.PORT || 5000, () =>
+const server = app.listen(process.env.PORT || 5000, "0.0.0.0", () =>
   console.log(`server listening on 5000...`)
 );
