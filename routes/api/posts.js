@@ -10,6 +10,7 @@ const User = require("../../models/User");
 
 // Load Input Validatoin
 const validatePostInput = require("../../validation/post");
+const validateCommmentsInput = require("../../validation/comments");
 
 // @route  GET api/posts
 // @desc   Get posts
@@ -80,10 +81,10 @@ router.delete(
 // @desc   Like post
 // @access Private
 router.post(
-  "/like/:id",
+  "/like/:post_id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    Post.findById(req.params.id)
+    Post.findById(req.params.post_id)
       .then(post => {
         if (
           post.likes.filter(like => like.user.toString() === req.user.id)
@@ -105,10 +106,10 @@ router.post(
 // @desc   Unlike post
 // @access Private
 router.post(
-  "/unlike/:id",
+  "/unlike/:post_id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    Post.findById(req.params.id).then(post => {
+    Post.findById(req.params.post_id).then(post => {
       if (
         post.likes.filter(like => like.user.toString() === req.user.id)
           .length === 0
@@ -122,11 +123,77 @@ router.post(
       const findRemoveIndex = post.likes
         .map(like => like.user.toString())
         .indexOf(req.user._id);
-
+      // remove like from likes array and save adjusted post
       post.likes.splice(findRemoveIndex, 1);
       post.save().then(post => res.json(post));
     });
   }
 );
 
+// @route  POST api/posts/comment
+// @desc   Comment on post
+// @access Private
+router.post(
+  "/comment/:post_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateCommmentsInput(req.body);
+
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
+    Post.findById(req.params.post_id).then(post => {
+      const newComment = {
+        user: req.user.id,
+        text: req.body.text,
+        name: req.body.name,
+        avatar: req.body.avatar
+      };
+
+      // Add to comments array
+      post.comments.unshift(newComment);
+      // save adjusted post
+      post
+        .save()
+        .then(post => res.json(post))
+        .catch(err => res.status(404).json({ postnotfound: "No post found" }));
+    });
+  }
+);
+
+// @route  DELETE api/posts/comment/:post_id/:com_id
+// @desc   Delete comment on post
+// @access Private
+router.delete(
+  "/comment/:post_id/:com_id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const errors = {};
+
+    Post.findById(req.params.post_id)
+      .then(post => {
+        // check to see if comment exists
+        if (
+          post.comments.filter(
+            comment => comment._id.toString() === req.params.com_id
+          ).length === 0
+        ) {
+          errors.comments = "Comment doesn't exists";
+          return res.status(404).json(errors);
+        }
+
+        // find index of removed comment
+        const findRemoveIndex = post.comments
+          .map(comment => comment._id.toString())
+          .indexOf(req.params.com_id);
+
+        // remove from comments array
+        post.comments.splice(findRemoveIndex, 1);
+        // save updated post
+        post.save().then(post => res.json(post));
+      })
+      .catch(err => res.status(404).json(err));
+  }
+);
 module.exports = router;
