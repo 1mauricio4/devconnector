@@ -13,7 +13,7 @@ const key = require("../../config/keys").secretOrKey;
 const validateRegisterInput = require("../../validation/register");
 const validateLoginInput = require("../../validation/login");
 
-// @route  /api/users/register
+// @route  POST /api/users/register
 // @desc   Register new user
 // @access Public
 router.post("/register", (req, res) => {
@@ -48,14 +48,14 @@ router.post("/register", (req, res) => {
           newUser
             .save()
             .then(user => res.json(user))
-            .catch(err => console.log(err));
+            .catch(err => console.log(err.response.body));
         });
       });
     }
   });
 });
 
-// @route  /api/users/login
+// @route  POST /api/users/login
 // @desc   Login user / returning JWT Token
 // @access Public
 router.post("/login", (req, res) => {
@@ -96,7 +96,7 @@ router.post("/login", (req, res) => {
   });
 });
 
-// @route  /api/users/current
+// @route  GET /api/users/current
 // @desc   return current user
 // @access Private
 router.get(
