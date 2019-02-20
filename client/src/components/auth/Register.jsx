@@ -1,8 +1,11 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 // import axios from "axios";
 import classnames from "classnames";
+import { connect } from "react-redux";
+import { registerUser } from "../../actions/authActions";
 
-export default class Register extends Component {
+class Register extends Component {
   constructor() {
     super();
     this.state = {
@@ -22,7 +25,7 @@ export default class Register extends Component {
     });
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
 
     const newUser = {
@@ -32,20 +35,22 @@ export default class Register extends Component {
       passwordTwo: this.state.passwordTwo
     };
 
-    let res = await fetch("/api/users/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newUser)
-    });
-    let json = await res.json();
+    this.props.registerUser(newUser);
 
-    if (res.ok) {
-      console.log(json);
-    } else {
-      this.setState({
-        errors: json
-      });
-    }
+    // let res = await fetch("/api/users/register", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(newUser)
+    // });
+    // let json = await res.json();
+
+    // if (res.ok) {
+    //   console.log(json);
+    // } else {
+    //   this.setState({
+    //     errors: json
+    //   });
+    // }
 
     // axios way
     //   .post("/api/users/register", newUser)
@@ -55,9 +60,11 @@ export default class Register extends Component {
 
   render() {
     const { errors } = this.state;
+    const { user } = this.props.auth;
 
     return (
       <div className="register">
+        {user ? user.name : null}
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
@@ -139,3 +146,17 @@ export default class Register extends Component {
     );
   }
 }
+
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser }
+)(Register);
