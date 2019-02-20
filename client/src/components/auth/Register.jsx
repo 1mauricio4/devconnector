@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-// import axios from "axios";
+import { withRouter } from "react-router-dom";
 import classnames from "classnames";
 import { connect } from "react-redux";
 import { registerUser } from "../../actions/authActions";
@@ -19,6 +19,12 @@ class Register extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.errors !== prevState.errors) {
+      return { errors: nextProps.errors };
+    } else return null;
+  }
+
   handleChange(event) {
     this.setState({
       [event.target.name]: event.target.value
@@ -35,36 +41,14 @@ class Register extends Component {
       passwordTwo: this.state.passwordTwo
     };
 
-    this.props.registerUser(newUser);
-
-    // let res = await fetch("/api/users/register", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(newUser)
-    // });
-    // let json = await res.json();
-
-    // if (res.ok) {
-    //   console.log(json);
-    // } else {
-    //   this.setState({
-    //     errors: json
-    //   });
-    // }
-
-    // axios way
-    //   .post("/api/users/register", newUser)
-    //   .then(res => console.log(res.data))
-    //   .catch(err => this.setState({ errors: err.response.data }));
+    this.props.registerUser(newUser, this.props.history);
   }
 
   render() {
     const { errors } = this.state;
-    const { user } = this.props.auth;
 
     return (
       <div className="register">
-        {user ? user.name : null}
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
@@ -149,14 +133,16 @@ class Register extends Component {
 
 Register.propTypes = {
   registerUser: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  errors: state.errors
 });
 
 export default connect(
   mapStateToProps,
   { registerUser }
-)(Register);
+)(withRouter(Register));
