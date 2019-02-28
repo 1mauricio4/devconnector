@@ -4,7 +4,6 @@ import jwt_decode from "jwt-decode";
 import setAuthToken from "../utils/setAuthToken";
 
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
-import { decode } from "punycode";
 
 // Register User
 export const registerUser = (userData, history) => async dispatch => {
@@ -47,16 +46,23 @@ export const loginUser = userData => async dispatch => {
         payload: err.response.data
       })
     );
-
-  // let res = fetch("/api/users/login", {
+  // let res = await fetch("/api/users/login", {
   //   method: "POST",
   //   headers: { "Content-Type": "application/json" },
   //   body: JSON.stringify(userData)
   // });
-
   // let json = await res.json();
-
-  // if (!res.ok) {
+  // if (res.ok) {
+  //   const { token } = json;
+  //   // set token to localStorage
+  //   localStorage.setItem("jwtToken", token);
+  //   // Set token to auth Header
+  //   setAuthToken(token);
+  //   // Decode token to get user data
+  //   const decoded = jwt_decode(token);
+  //   // set current user
+  //   dispatch(setCurrentUser(decoded));
+  // } else {
   //   dispatch({
   //     type: GET_ERRORS,
   //     payload: json
@@ -70,4 +76,14 @@ export const setCurrentUser = decoded => {
     type: SET_CURRENT_USER,
     payload: decoded
   };
+};
+
+// log user out
+export const logoutUser = () => dispatch => {
+  // remove token from ls(localStorage)
+  localStorage.removeItem("jwtToken");
+  // remove axios auth header for future requests
+  setAuthToken(false);
+  // set current user to empty obj and isAuthenticated to false
+  dispatch(setCurrentUser({}));
 };
