@@ -72,7 +72,7 @@ router.get("/handle/:handle", (req, res) => {
 });
 
 // @route  GET api/profile/user/:user_id
-// @desc   Get profile by handle
+// @desc   Get profile by id
 // @access Public
 router.get("/user/:user_id", (req, res) => {
   const errors = {};
