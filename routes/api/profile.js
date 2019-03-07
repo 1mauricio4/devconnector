@@ -139,7 +139,7 @@ router.post(
       } else {
         // check if handle exists
         Profile.findOne({ handle: profileFields.handle }).then(profile => {
-          // if it does we return eroors for we don't want people with the same handle
+          // if it does we return erorrs for we don't want people with the same handle
           if (profile) {
             errors.handle = "That handle already exists";
             res.status(404).json(errors);
