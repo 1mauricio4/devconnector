@@ -9,9 +9,11 @@ import TextAreaFieldGroup from "../common/TextAreaFieldGroup";
 import InputGroup from "../common/InputGroup";
 import SelectListGroup from "../common/SelectListGroup";
 // profile action
-import { createProfile } from "../../actions/profileActions";
+import { createProfile, getCurrentProfile } from "../../actions/profileActions";
+// custome validator
+import is_Empty from "../../validation/is-empty";
 
-class CreateProfile extends Component {
+class EditProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,10 +37,79 @@ class CreateProfile extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.errors !== prevState.errors) {
-      return { errors: nextProps.errors };
-    } else return null;
+  componentDidMount() {
+    this.props.getCurrentProfile();
+  }
+
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   if (nextProps.errors !== prevState.errors) {
+  //     return { errors: nextProps.errors };
+  //   }
+
+  //   if (nextProps.profile.profile) {
+  //     const profile = nextProps.profile.profile;
+  //   }
+  //   return null;
+  // }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.errors !== prevProps.errors) {
+      console.log(this.props.profile.profile);
+
+      this.setState({ errors: this.props.errors });
+    }
+    if (this.props.profile.profile !== prevProps.profile.profile) {
+      console.log(prevProps.profile.profile);
+      console.log("this.profile.profile running...");
+      console.log(this.props.profile.profile);
+
+      const { profile } = this.props.profile;
+
+      // Bring skills array back to CSV(comman separated values)
+      const skillsCSV = profile.skills.join(",");
+
+      //if profile field doesn't exist, make empty string
+      profile.company = !is_Empty(profile.company) ? profile.company : "";
+      profile.website = !is_Empty(profile.website) ? profile.website : "";
+      profile.location = !is_Empty(profile.location) ? profile.location : "";
+      profile.githubusername = !is_Empty(profile.githubusername)
+        ? profile.githubusername
+        : "";
+      profile.bio = !is_Empty(profile.bio) ? profile.bio : "";
+      profile.social = !is_Empty(profile.social) ? profile.social : {};
+      profile.twitter = !is_Empty(profile.social.twitter)
+        ? profile.social.twitter
+        : "";
+      profile.facebook = !is_Empty(profile.social.facebook)
+        ? profile.social.facebook
+        : "";
+      profile.linkedin = !is_Empty(profile.social.linkedin)
+        ? profile.social.linkedin
+        : "";
+      profile.youtube = !is_Empty(profile.social.youtube)
+        ? profile.social.youtube
+        : "";
+      profile.instagram = !is_Empty(profile.social.instagram)
+        ? profile.social.instagram
+        : "";
+
+      //set component fields state
+      this.setState({
+        handle: profile.handle,
+        company: profile.company,
+        website: profile.website,
+        location: profile.location,
+        status: profile.status,
+        skills: skillsCSV,
+        bio: profile.bio,
+        githubusername: profile.githubusername,
+        youtube: profile.youtube,
+        twitter: profile.twitter,
+        facebook: profile.facebook,
+        linkedin: profile.linkedin,
+        instagram: profile.instagram
+      });
+    }
   }
 
   handleChange(event) {
@@ -145,10 +216,7 @@ class CreateProfile extends Component {
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Create Your Profile</h1>
-              <p className="lead text-center">
-                Lets get some information to make your profile stand out
-              </p>
+              <h1 className="display-4 text-center">Edit Your Profile</h1>
               <small className="d-block pb-3">* = required fields</small>
               <form onSubmit={this.handleSubmit}>
                 <TextFieldGroup
@@ -251,10 +319,11 @@ class CreateProfile extends Component {
   }
 }
 
-CreateProfile.propTypes = {
+EditProfile.propTypes = {
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
-  createProfile: PropTypes.func.isRequired
+  createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired
 };
 
 const maspStateToProps = state => ({
@@ -264,5 +333,5 @@ const maspStateToProps = state => ({
 
 export default connect(
   maspStateToProps,
-  { createProfile }
-)(withRouter(CreateProfile));
+  { createProfile, getCurrentProfile }
+)(withRouter(EditProfile));
