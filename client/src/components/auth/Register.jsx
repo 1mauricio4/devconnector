@@ -68,7 +68,7 @@ class Register extends Component {
                   placeholder="Name"
                   name="name"
                   value={this.state.name}
-                  onChange={this.handleChange}
+                  handleChange={this.handleChange}
                   error={errors.name}
                 />
 
@@ -77,7 +77,7 @@ class Register extends Component {
                   placeholder="Email Address"
                   name="email"
                   value={this.state.email}
-                  onChange={this.handleChange}
+                  handleChange={this.handleChange}
                   error={errors.email}
                   info="This site uses Gravatar so if you want a profile image, use
                   a Gravatar email"
@@ -88,7 +88,7 @@ class Register extends Component {
                   placeholder="Password"
                   name="password"
                   value={this.state.password}
-                  onChange={this.handleChange}
+                  handleChange={this.handleChange}
                   error={errors.password}
                 />
 
@@ -97,7 +97,7 @@ class Register extends Component {
                   placeholder="Confirm Password"
                   name="passwordTwo"
                   value={this.state.passwordTwo}
-                  onChange={this.handleChange}
+                  handleChange={this.handleChange}
                   error={errors.passwordTwo}
                 />
 
