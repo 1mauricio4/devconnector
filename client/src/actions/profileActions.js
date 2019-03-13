@@ -29,6 +29,13 @@ export const getCurrentProfile = () => dispatch => {
     );
 };
 
+// Profile loading
+export const setProfileLoading = () => {
+  return {
+    type: PROFILE_LOADING
+  };
+};
+
 // Create profile
 export const createProfile = (profileData, history) => dispatch => {
   axios
@@ -42,11 +49,17 @@ export const createProfile = (profileData, history) => dispatch => {
     );
 };
 
-// Profile loading
-export const setProfileLoading = () => {
-  return {
-    type: PROFILE_LOADING
-  };
+// Add experience to profile
+export const addExperience = (expData, history) => dispatch => {
+  axios
+    .post("/api/profile/experience", expData)
+    .then(res => history.push("/dashboard"))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
 };
 
 // Clear profile
