@@ -54,15 +54,9 @@ class EditProfile extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.errors !== prevProps.errors) {
-      console.log(this.props.profile.profile);
-
       this.setState({ errors: this.props.errors });
     }
     if (this.props.profile.profile !== prevProps.profile.profile) {
-      console.log(prevProps.profile.profile);
-      console.log("this.profile.profile running...");
-      console.log(this.props.profile.profile);
-
       const { profile } = this.props.profile;
 
       // Bring skills array back to CSV(comman separated values)
