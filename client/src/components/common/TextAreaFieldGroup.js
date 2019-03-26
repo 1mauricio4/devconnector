@@ -6,9 +6,9 @@ const TextAreaFieldGroup = ({
   name,
   placeholder,
   value,
-  error,
+  handleChange,
   info,
-  handleChange
+  error
 }) => {
   return (
     <div className="form-group">
