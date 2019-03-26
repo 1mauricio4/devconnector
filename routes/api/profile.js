@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const passport = require("passport");
+const fetch = require("node-fetch");
 
 // Load Input Validatoin
 const validateProfileInput = require("../../validation/profile");
@@ -11,6 +12,9 @@ const validateEducationInput = require("../../validation/education");
 const Profile = require("../../models/Profile");
 // Load User Model
 const User = require("../../models/User");
+// Retrieve client key and secret key
+const clientId = require("../../config/keys").clientId;
+const clientSecret = require("../../config/keys").clientSecret;
 
 // @route  GET api/profile
 // @desc   Get current users profile
@@ -89,6 +93,22 @@ router.get("/user/:user_id", (req, res) => {
     .catch(err =>
       res.status(404).json({ profile: "There is no profile for this user" })
     );
+});
+
+// @route  GET api/profile/github/:username
+// @desc   Get users github
+// @access Public
+router.get("/github/:username", (req, res) => {
+  let username = req.params.username,
+    count = 5,
+    sort = "created: asc";
+
+  fetch(
+    `https://api.github.com/users/${username}/repos?per_page=${count}&sort=${sort}&client_id=${clientId}&client_secret=${clientSecret}`
+  )
+    .then(resp => resp.json())
+    .then(data => res.json(data))
+    .catch(err => console.log("error", err));
 });
 
 // @route  POST api/profile
