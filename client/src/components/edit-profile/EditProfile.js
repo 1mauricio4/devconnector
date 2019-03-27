@@ -41,17 +41,6 @@ class EditProfile extends Component {
     this.props.getCurrentProfile();
   }
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   if (nextProps.errors !== prevState.errors) {
-  //     return { errors: nextProps.errors };
-  //   }
-
-  //   if (nextProps.profile.profile) {
-  //     const profile = nextProps.profile.profile;
-  //   }
-  //   return null;
-  // }
-
   componentDidUpdate(prevProps) {
     if (this.props.errors !== prevProps.errors) {
       this.setState({ errors: this.props.errors });
